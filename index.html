@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta id="themeColor" name="theme-color" content="#1b0f2e">
+<title>Kakooma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bgA:#140a26; --bgB:#22113c; --bgC:#2e1649; --glow:rgba(176,80,156,.55); --glow2:rgba(255,170,205,.14); --moonc:rgba(255,235,248,.2); --star:#fff;
+  --moon:#f5e9ff; --moon-dim:#b9a4d3; --hi:#fff; --rose:#ff8fb4; --time:#ffc4da; --petal-ink:#3d1a38;
+  --line:rgba(255,196,224,.18); --glass:rgba(38,20,66,.68); --panel:rgba(255,255,255,.05); --rule:rgba(255,255,255,.1); --opt:#24123f; --edge:#fff;
+  --p0:#ffc3d6; --p1:#ffe1ea; --p2:#fffafb; --h0:#ffa6c3; --h1:#ffcadb; --h2:#fff0f5; --b0:#ffbad0; --b1:#ffdbe6; --b2:#fff7fa; --c0:#ffd0d3; --c1:#f2808c;
+  --pstroke:#e58fae; --pglow:rgba(255,130,180,.4); --cglow:rgba(255,120,140,.5); --bl0:#ffd9e8; --bl1:#ff8fb4;
+  --btn0:#ffb4ce; --btn1:#ff7aa6; --btnink:#3a1233; --btnglow:rgba(255,111,156,.85);
+  --serif:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --sans:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:var(--sans);color:var(--moon);overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation;
+  background:
+    radial-gradient(1100px 700px at 50% 114%,var(--glow),transparent 62%),
+    radial-gradient(800px 520px at 88% -8%,var(--glow2),transparent 60%),
+    linear-gradient(180deg,var(--bgA) 0%,var(--bgB) 58%,var(--bgC) 100%);
+}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--rose);outline-offset:3px}
+
+/* night sky: moon glow, stars, drifting blossoms */
+#bg{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+#bg .moon{position:absolute;right:-6vmin;top:-8vmin;width:48vmin;height:48vmin;border-radius:50%;
+  background:radial-gradient(circle at 42% 42%,var(--moonc),transparent 70%)}
+#bg .star{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--star);opacity:var(--o)}
+#bg i{position:absolute;top:-30px;width:var(--s);height:var(--s);border-radius:80% 0 80% 0;
+  background:linear-gradient(135deg,var(--bl0),var(--bl1));opacity:.5;filter:blur(var(--b));
+  animation:drift var(--t) linear infinite;animation-delay:var(--d)}
+@keyframes drift{
+  0%{transform:translate3d(0,-40px,0) rotate(0)}
+  50%{transform:translate3d(var(--x),55vh,0) rotate(220deg)}
+  100%{transform:translate3d(calc(var(--x) * -.6),112vh,0) rotate(420deg)}
+}
+@media (prefers-reduced-motion:reduce){#bg i{animation:none;display:none}}
+
+/* screens */
+.screen{position:fixed;inset:0;display:none;z-index:1;overflow:hidden}
+.screen.active{display:flex;flex-direction:column;align-items:center;animation:fadeIn .6s ease both}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.wrap{width:min(900px,92vw);margin:auto;padding:calc(env(safe-area-inset-top) + 24px) 0 24px;display:flex;flex-direction:column;align-items:center}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(42px,7vw,68px);letter-spacing:-.015em;line-height:1.02;text-align:center;color:var(--hi)}
+.sub{color:var(--moon-dim);font-weight:600;font-size:16px;margin:10px 0 28px;text-align:center}
+.logo{display:block;margin:0 auto 10px;filter:drop-shadow(0 0 16px var(--pglow))}
+
+/* name entry */
+.status{margin-top:26px;font-size:13px;color:var(--moon-dim);opacity:.8;text-align:center}
+
+/* mode screen */
+.topbar{width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.link{background:none;border:0;color:var(--moon-dim);font-weight:700;font-size:14px;cursor:pointer;padding:8px 4px;transition:color .2s}
+.link:hover{color:var(--rose)}
+.dots{display:flex;gap:9px;justify-content:center;margin:0 0 28px}
+.dots b{width:11px;height:11px;border-radius:50%;background:var(--rule);transition:background .3s,box-shadow .3s}
+.dots b.on{background:var(--rose);box-shadow:0 0 12px color-mix(in srgb,var(--rose) 80%,transparent)}
+.row{width:100%}
+.rowlabel{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;color:var(--hi);margin:0 0 10px 4px}
+.rowlabel i{font-style:normal;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--rose);color:var(--btnink);font-size:22px;font-weight:800;line-height:1}
+.opb{position:absolute;top:9px;right:10px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--rose) 22%,transparent);color:var(--rose);font-size:17px;font-weight:800;line-height:1}
+#hudC{justify-self:center;display:flex;flex-direction:column;align-items:center;gap:9px}
+#modeTag{display:flex;align-items:center;gap:9px;padding:5px 18px 5px 6px;border-radius:999px;background:color-mix(in srgb,var(--rose) 16%,transparent);border:1px solid color-mix(in srgb,var(--rose) 45%,transparent);color:var(--hi);font-weight:800;font-size:15px;white-space:nowrap}
+#modeTag b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--rose);color:var(--btnink);font-size:24px;font-weight:800;line-height:1}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.mode{position:relative;border:1px solid var(--line);background:var(--panel);border-radius:24px;padding:16px 8px 14px;
+  display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;
+  transition:transform .2s,box-shadow .2s,background .2s,border-color .2s}
+.mode:hover{transform:translateY(-3px);background:color-mix(in srgb,var(--rose) 12%,transparent);border-color:color-mix(in srgb,var(--rose) 50%,transparent);box-shadow:0 18px 40px -18px var(--btnglow)}
+.mode b{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--hi)}
+.mode small{color:var(--moon-dim);font-weight:700;font-size:13px}
+.mode em{font-style:normal;font-size:13px;font-weight:800;color:var(--rose);margin-top:4px;min-height:17px}
+.ico{width:54px;height:54px;margin-bottom:4px;filter:drop-shadow(0 0 8px var(--pglow))}
+.ico path{fill:url(#pg);stroke:var(--edge);stroke-width:4;stroke-linejoin:round}
+.ico .gc{fill:url(#jg);stroke:var(--edge);stroke-width:2;stroke-linejoin:round}
+.ol{fill:none;stroke:var(--edge);stroke-width:3.2;stroke-linejoin:round}
+#bigC .gc{stroke:none}
+
+/* game */
+#screen-game{overflow:hidden}
+#stage{position:absolute;inset:0;width:100%;height:100%}
+#stage text{fill:var(--petal-ink);font-family:var(--serif);font-weight:700;font-variant-numeric:lining-nums;text-anchor:middle;pointer-events:none}
+#stage line{stroke:var(--petal-ink)}
+#petalsL,#fxL,#bigP{filter:drop-shadow(0 0 9px var(--pglow))}
+#centersL,#bigC{pointer-events:none;filter:drop-shadow(0 0 8px var(--cglow))}
+#hud{position:absolute;top:0;left:0;right:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  padding:calc(env(safe-area-inset-top) + 14px) 20px 0;z-index:5;pointer-events:none}
+#timer{position:relative;justify-self:start;font-family:var(--serif);font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:var(--moon-dim);opacity:.9;transition:color .25s}
+#timer.hit{color:var(--rose)}
+#pen{position:absolute;left:0;top:30px;color:var(--rose);font-family:var(--sans);font-weight:800;font-size:14px;opacity:0}
+#best{justify-self:end;font-family:var(--serif);font-size:16px;font-weight:500;color:var(--moon-dim);font-variant-numeric:tabular-nums}
+#menuBtn{pointer-events:auto;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 15px;font-size:13px;font-weight:700;color:var(--moon-dim);cursor:pointer;transition:color .2s,border-color .2s}
+#menuBtn:hover{color:var(--rose);border-color:color-mix(in srgb,var(--rose) 50%,transparent)}
+#hint{display:none;position:absolute;bottom:calc(env(safe-area-inset-bottom) + 16px);left:0;right:0;text-align:center;font-size:14.5px;font-weight:600;
+  color:var(--moon-dim);padding:0 20px;transition:opacity .4s;pointer-events:none}
+.petal.live{cursor:pointer}
+.pi{transform-box:fill-box;transform-origin:center}
+.petal.live .pi{transition:transform .22s ease}
+.petal.live:hover .pi{transform:scale(1.07)}
+.pp{fill:url(#pg);stroke:var(--pstroke);stroke-width:1.5;stroke-linejoin:round;transition:fill .2s}
+.petal.live:hover .pp{fill:url(#pgh)}
+.bigp .pp{fill:url(#pgb);stroke:var(--edge);stroke-width:3}
+.petal.wrong .pi{opacity:.36}
+.trav text{stroke:var(--edge);stroke-width:6px;paint-order:stroke;stroke-linejoin:round}
+.trav line,.trav rect{stroke:var(--edge)}
+.gc{fill:url(#jg);stroke:var(--edge);stroke-width:2.2;stroke-linejoin:round}
+#board{transform-origin:50% 50%}
+
+.card{background:var(--glass);backdrop-filter:blur(20px) saturate(1.2);-webkit-backdrop-filter:blur(20px) saturate(1.2);
+  border:1px solid var(--line);border-radius:28px;box-shadow:0 40px 90px -30px rgba(0,0,0,.7),inset 0 1px 0 var(--rule)}
+#intro,#result,#lb{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.97);opacity:0;pointer-events:none;
+  transition:opacity .5s ease,transform .5s ease;z-index:8}
+#intro.show,#result.show,#lb.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+#intro{width:min(92vw,430px);padding:32px 30px 28px;text-align:center}
+#intro h2{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--hi);margin-bottom:4px}
+#intro .meta{color:var(--moon-dim);font-weight:600;font-size:14.5px;margin-bottom:20px}
+#intro ol{list-style:none;text-align:left;display:grid;gap:14px;margin-bottom:24px}
+#intro li{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start;font-weight:600;font-size:15px;line-height:1.5}
+#intro li i{font-style:normal;width:26px;height:26px;border-radius:50%;background:color-mix(in srgb,var(--rose) 16%,transparent);color:var(--rose);display:grid;place-items:center;font-size:13px;font-weight:800}
+#intro li b{color:var(--hi)}
+.btn{border:0;border-radius:999px;padding:13px 30px;font-weight:800;font-size:16px;color:var(--btnink);cursor:pointer;
+  background:linear-gradient(135deg,var(--btn0),var(--btn1));box-shadow:0 14px 32px -12px var(--btnglow);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 18px 36px -12px var(--btnglow)}
+.btn.ghost{background:transparent;color:var(--moon);box-shadow:none;border:1px solid var(--line)}
+.btn.ghost:hover{border-color:color-mix(in srgb,var(--rose) 55%,transparent)}
+.btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+#count{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--serif);font-weight:600;font-size:min(34vw,200px);color:var(--time);text-shadow:0 0 50px color-mix(in srgb,var(--rose) 70%,transparent);z-index:7;pointer-events:none;opacity:0}
+
+#result{width:min(92vw,390px);padding:28px 28px 26px;text-align:center}
+.rlabel{font-weight:600;font-size:15px;color:var(--moon-dim)}
+.rtime{font-family:var(--serif);font-size:76px;font-weight:600;line-height:1.05;color:var(--time);text-shadow:0 0 40px color-mix(in srgb,var(--rose) 55%,transparent);font-variant-numeric:tabular-nums;margin:2px 0 0}
+.rtime small{font-size:28px;margin-left:3px}
+.rpen{font-size:13.5px;font-weight:600;color:var(--moon-dim);margin-bottom:16px}
+.tag{display:inline-block;margin:0 0 12px;padding:5px 14px;border-radius:999px;background:color-mix(in srgb,var(--rose) 16%,transparent);color:var(--rose);font-size:13px;font-weight:800}
+.rrows{display:grid;margin:0 0 22px;border-top:1px solid var(--rule)}
+.rrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:12px 2px;border-bottom:1px solid var(--rule);font-weight:600;font-size:15px}
+.rrow span{color:var(--moon-dim)}
+.rrow b{font-family:var(--serif);font-size:19px;font-weight:600;text-align:right;color:var(--hi)}
+.rrow small{font-family:var(--sans);font-weight:700;color:var(--moon-dim);font-size:13px}
+.rnote{font-size:12.5px;color:var(--moon-dim);margin:-10px 0 16px}
+
+#lb{width:min(92vw,410px);padding:26px 24px 22px;z-index:9;max-height:94vh;display:flex;flex-direction:column}
+#lb h2{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--hi);text-align:center;margin-bottom:14px}
+#lbMode{font:inherit;font-weight:700;color:var(--moon);padding:11px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);margin-bottom:12px;width:100%}
+#lbMode option{background:var(--opt);color:var(--moon)}
+#lbList{list-style:none;overflow:hidden;margin-bottom:16px}
+#lbList li{display:grid;grid-template-columns:30px 1fr auto;gap:8px;padding:10px 10px;border-radius:12px;font-weight:700;font-size:15px}
+#lbList li span{color:var(--moon-dim)}
+#lbList li em{font-style:normal;font-family:var(--serif);font-variant-numeric:tabular-nums;color:var(--time)}
+#lbList li.me{background:color-mix(in srgb,var(--rose) 14%,transparent)}
+.empty{text-align:center;color:var(--moon-dim);font-weight:600;padding:18px 0}
+
+/* name entry */
+.namebox{width:min(420px,100%);position:relative}
+#nameIn{width:100%;font:inherit;font-weight:700;font-size:20px;text-align:center;color:var(--hi);padding:15px 18px;border-radius:20px;
+  border:1px solid var(--line);background:var(--panel);outline:none;user-select:text;-webkit-user-select:text;transition:border-color .2s,box-shadow .2s}
+#nameIn::placeholder{color:var(--moon-dim);font-weight:600}
+#nameIn:focus{border-color:var(--rose);box-shadow:0 0 0 4px color-mix(in srgb,var(--rose) 18%,transparent)}
+#sugg{list-style:none;margin-top:10px;display:grid;gap:6px;min-height:0}
+#sugg li{padding:12px 16px;border-radius:16px;border:1px solid var(--line);background:var(--panel);font-weight:700;font-size:16px;cursor:pointer;text-align:center;transition:background .15s,border-color .15s}
+#sugg li.sel,#sugg li:hover{background:color-mix(in srgb,var(--rose) 18%,transparent);border-color:color-mix(in srgb,var(--rose) 55%,transparent)}
+#sugg li.add{border-style:dashed;color:var(--moon-dim)}
+#sugg li.add b{color:var(--hi)}
+#sugg li.sp{color:var(--moon-dim)}
+mark{background:none;color:var(--rose)}
+/* skins */
+#skins{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+#skins .lab{font-weight:700;font-size:13px;color:var(--moon-dim);margin-right:4px}
+.sw{width:34px;height:34px;border-radius:50%;border:2px solid transparent;padding:0;cursor:pointer;position:relative;overflow:hidden;transition:transform .15s,border-color .15s,box-shadow .15s;
+  box-shadow:0 0 0 1px var(--line)}
+.sw:hover{transform:scale(1.1)}
+.sw.on{border-color:var(--hi);box-shadow:0 0 0 3px color-mix(in srgb,var(--rose) 45%,transparent)}
+.sw i{position:absolute;inset:0;display:block}
+.sw i+i{inset:auto 4px 4px auto;width:12px;height:12px;border-radius:50%}
+#skinNote{width:100%;text-align:center;font-size:12.5px;font-weight:600;color:var(--moon-dim);margin-top:2px}
+#modes{width:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px 22px}
+@media (max-height:780px){
+  .wrap{padding-top:calc(env(safe-area-inset-top) + 12px);padding-bottom:12px}
+  h1{font-size:clamp(34px,6vw,50px)}
+  .sub{margin:6px 0 14px;font-size:15px}
+  .dots{margin-bottom:14px}
+  .mode{padding:10px 8px 10px}
+  .ico{width:42px;height:42px;margin-bottom:2px}
+  #skins{margin-top:12px}
+  .logo{width:60px!important;height:60px!important}
+}
+@media (max-height:620px){
+  .logo,#logo{display:none}
+  #nameIn{padding:11px 16px;font-size:18px}
+  #sugg li{padding:9px 14px}
+  .sub{margin:4px 0 10px}
+  .ico{width:34px;height:34px}
+  .mode small{display:none}
+  .rtime{font-size:56px}
+}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <linearGradient id="pg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" style="stop-color:var(--p0)"/><stop offset=".55" style="stop-color:var(--p1)"/><stop offset="1" style="stop-color:var(--p2)"/></linearGradient>
+  <linearGradient id="pgh" x1="0" y1="1" x2="0" y2="0"><stop offset="0" style="stop-color:var(--h0)"/><stop offset=".5" style="stop-color:var(--h1)"/><stop offset="1" style="stop-color:var(--h2)"/></linearGradient>
+  <linearGradient id="pgb" x1="0" y1="1" x2="0" y2="0"><stop offset="0" style="stop-color:var(--b0)"/><stop offset=".55" style="stop-color:var(--b1)"/><stop offset="1" style="stop-color:var(--b2)"/></linearGradient>
+  <linearGradient id="jg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--c0)"/><stop offset="1" style="stop-color:var(--c1)"/></linearGradient>
+</defs></svg>
+
+
+<section id="screen-name" class="screen active">
+  <div class="wrap">
+    <div id="logo"></div>
+    <h1>Kakooma</h1>
+    <p class="sub">Who's playing?</p>
+    <div class="namebox">
+      <input id="nameIn" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" maxlength="24" placeholder="Type your name" aria-label="Your name">
+      <ul id="sugg" role="listbox"></ul>
+    </div>
+    <p class="status" id="status"></p>
+  </div>
+</section>
+
+<section id="screen-modes" class="screen">
+  <div class="wrap">
+    <div class="topbar">
+      <button class="link" id="changeName">&larr; Change player</button>
+      <button class="link" id="openLB">Leaderboard</button>
+    </div>
+    <h1 id="hello">Hi</h1>
+    <p class="sub" id="modesSub">Pick a garden to play</p>
+    <div class="dots" id="dots"></div>
+    <div id="modes"></div>
+    <div id="skins"></div>
+  </div>
+</section>
+
+<section id="screen-game" class="screen">
+  <svg id="stage" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <g id="board">
+      <g id="backL"></g>
+      <g id="bigC"></g>
+      <g id="petalsL"></g>
+      <g id="centersL"></g>
+      <g id="bigP"></g>
+    </g>
+    <g id="fxL"></g>
+  </svg>
+  <div id="hud">
+    <div id="timer">0.0<span id="pen">+10s</span></div>
+    <div id="hudC"><button id="menuBtn">Menu</button><div id="modeTag"></div></div>
+    <div id="best"></div>
+  </div>
+  <div id="hint"></div>
+  <div id="count"></div>
+
+  <div id="intro" class="card">
+    <h2 id="introTitle"></h2>
+    <div class="meta" id="introMeta"></div>
+    <ol id="introSteps"></ol>
+    <div class="btns"><button class="btn" id="go">Start</button><button class="btn ghost" id="introBack">Back</button></div>
+  </div>
+
+  <div id="result" class="card"></div>
+</section>
+
+<div id="lb" class="card" style="position:fixed">
+  <h2>Leaderboard</h2>
+  <select id="lbMode"></select>
+  <ul id="lbList"></ul>
+  <div class="btns"><button class="btn ghost" id="lbClose">Close</button></div>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const CONFIG = {
+  // Paste your Google Apps Script web-app URL here (see Code.gs).
+  // Leave blank to play in "local mode" (scores saved on this device only).
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyMDxuzKjyuOMzDEOUnAbEvXBxygIgaESdAm_xTVzrrj3LZbxYpoGAHXDbFCauJ_h-g/exec',
+
+  PENALTY: 10,            // seconds added for a wrong petal
+  UNLOCK_AFTER: 5,        // completed Easy addition games needed to unlock Hard addition and multiplication
+  SKIN_EVERY: 5,          // a new skin unlocks for every this many completed games
+  BASIC: 'add-easy',
+  TEACHER: 'Mr Mills',    // always has every mode unlocked
+  GUEST: 'Anonymous',     // scores are not saved to the shared board
+
+  // Fallback class list, used until the "Players" tab of the sheet loads.
+  // Used until the "Players" tab of the sheet loads (the sheet's list takes over once it does).
+  PLAYERS: ['Zoe B', 'Thea B', 'Esme D', 'Bailey D', 'Azmaan G', 'Christopher G', 'Georgia H', 'Elin H', 'Leo H', 'George M', 'Nixon M', 'Shanaya M', 'Chloe M', 'Mitchell O', 'Monty S', 'Archie S', 'Oliver T', 'Elise T', 'Indi vB', 'William vR', 'Hudson W', 'Roman W', 'Oliver W', 'Max W', 'Caitlyn W', 'Jazmine W', 'Michael Y', 'Joshua Y'],
+};
+
+/* ============================================================
+   Helpers
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const rint = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const gcd = (a, b) => b ? gcd(b, a % b) : a;
+const lcm = (a, b) => a / gcd(a, b) * b;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ord = n => { const s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+const fmt = t => {
+  t = Math.round(t * 10) / 10;
+  if (t < 60) return t.toFixed(1);
+  const m = Math.floor(t / 60), s = t - m * 60;
+  return m + ':' + (s < 10 ? '0' : '') + s.toFixed(1);
+};
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const store = {
+  load(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } },
+  save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* ignore */ } },
+};
+
+/* ============================================================
+   Modes
+   ============================================================ */
+const OPS = [{ id: 'add', label: 'Addition', sym: '+' }, { id: 'mul', label: 'Multiplication', sym: '\u00d7' }];
+const MODES = [
+  { id: 'add-easy', op: 'add', level: 'easy', n: 5, levelLabel: 'Easy', title: 'Easy addition' },
+  { id: 'add-hard', op: 'add', level: 'hard', n: 7, levelLabel: 'Hard', title: 'Hard addition' },
+  { id: 'mul-easy', op: 'mul', level: 'easy', n: 5, levelLabel: 'Easy', title: 'Easy multiplication' },
+  { id: 'mul-hard', op: 'mul', level: 'hard', n: 7, levelLabel: 'Hard', title: 'Hard multiplication' },
+];
+
+const WORD = { add: 'sum', mul: 'product' };
+
+/* ============================================================
+   Puzzle generators (pure)
+   Every flower has N numbers and exactly ONE of them is the sum (or
+   product) of two other petals in that flower. The N answers become the
+   petals of the big flower, which again has exactly one sum/product petal.
+   ============================================================ */
+const mkF = (n, d) => { const g = gcd(n, d); return { n: n / g, d: d / g }; };
+const intVal = v => ({ t: 'int', s: String(v), k: v });
+const fracVal = (k, D) => { const f = mkF(k, D); return f.d === 1 ? intVal(f.n) : { t: 'frac', w: 0, n: f.n, d: f.d, k }; };
+
+// lo/hi: range of the two petals that are combined; pLo/pHi: range for the other petals
+function specFor(mode) {
+  const id = mode.id;
+  if (id === 'add-easy') return { rel: '+', lo: 1, hi: 15, pLo: 1, pHi: 30 };
+  if (id === 'add-hard') return { rel: '+', lo: 5, hi: 45, pLo: 3, pHi: 95 };
+  if (id === 'mul-easy') return { rel: '*', lo: 2, hi: 9, pLo: 2, pHi: 80 };
+  if (id === 'mul-hard') return { rel: '*', lo: 2, hi: 12, pLo: 2, pHi: 140 };
+  throw new Error('unknown mode');
+}
+const apply = (rel, a, b) => rel === '*' ? a * b : a + b;
+// number of pairs (i<j) whose sum/product is also a petal
+function countTriples(arr, rel) {
+  const s = new Set(arr); let c = 0;
+  for (let i = 0; i < arr.length; i++) for (let j = i + 1; j < arr.length; j++) if (s.has(apply(rel, arr[i], arr[j]))) c++;
+  return c;
+}
+function sumIndex(arr, rel) {
+  for (let i = 0; i < arr.length; i++) for (let j = i + 1; j < arr.length; j++) { const k = arr.indexOf(apply(rel, arr[i], arr[j])); if (k >= 0) return k; }
+  return -1;
+}
+function pairsFor(sp, t) {
+  const out = [];
+  for (let a = sp.lo; a <= sp.hi; a++) {
+    const b = sp.rel === '*' ? (t % a === 0 ? t / a : 0) : t - a;
+    if (b > a && b <= sp.hi) out.push([a, b]);
+  }
+  return out;
+}
+const uniCache = {};
+function universe(mode, sp) {
+  if (uniCache[mode.id]) return uniCache[mode.id];
+  const set = new Set();
+  for (let a = sp.lo; a <= sp.hi; a++) for (let b = a + 1; b <= sp.hi; b++) { const v = apply(sp.rel, a, b); if (v <= sp.pHi && v >= (sp.tMin || 0)) set.add(v); }
+  const U = [...set].sort((x, y) => x - y), Us = new Set(U), T = [];
+  for (let i = 0; i < U.length; i++) for (let j = i + 1; j < U.length; j++) { const z = apply(sp.rel, U[i], U[j]); if (Us.has(z)) T.push([U[i], U[j], z]); }
+  return (uniCache[mode.id] = { U, T });
+}
+// grow a set one petal at a time, keeping exactly one sum/product
+function fill(set, N, rel, draw) {
+  while (set.length < N) {
+    let placed = false;
+    for (let tr = 0; tr < 80 && !placed; tr++) {
+      const c = draw(); if (set.includes(c)) continue;
+      set.push(c);
+      if (countTriples(set, rel) === 1) placed = true; else set.pop();
+    }
+    if (!placed) return false;
+  }
+  return true;
+}
+function genFinal(mode, sp, N) {
+  const { U, T } = universe(mode, sp);
+  for (let at = 0; at < 5000; at++) {
+    const set = pick(T).slice();
+    if (fill(set, N, sp.rel, () => pick(U))) return shuffle(set);
+  }
+  throw new Error('could not build the big flower');
+}
+function genFlower(sp, t, N) {
+  const prs = pairsFor(sp, t);
+  let cl = Math.max(sp.pLo, Math.floor(t * .25)), ch = Math.min(sp.pHi, Math.ceil(t * 1.8) + 12);
+  if (ch - cl + 1 < 4 * N) ch = Math.min(sp.pHi, cl + 4 * N - 1);
+  for (let at = 0; at < 5000; at++) {
+    const set = [...pick(prs), t];
+    if (fill(set, N, sp.rel, () => rint(cl, ch))) return shuffle(set);
+  }
+  throw new Error('could not build a flower');
+}
+
+function genGame(mode) {
+  const sp = specFor(mode), N = mode.n;
+  for (let attempt = 0; attempt < 50; attempt++) {
+    try {
+      const big = genFinal(mode, sp, N);
+      const flowers = big.map((t, i) => {
+        const raw = genFlower(sp, t, N);
+        return { i, raw, vals: raw.map(k => intVal(k)), correct: raw.indexOf(t), done: false };
+      });
+      return { mode, flowers, big, bigCorrect: sumIndex(big, sp.rel), word: WORD[mode.op] };
+    } catch (e) { /* try again */ }
+  }
+  throw new Error('could not generate a game');
+}
+
+/* ============================================================
+   Flower drawing (everything is drawn in a 100-unit-radius space)
+   ============================================================ */
+const PI = Math.PI;
+const RHO = { 5: .243, 7: .22 }; // size of the centre polygon relative to its flower
+const f2 = n => n.toFixed(2);
+const ptsD = pts => 'M' + pts.map(p => f2(p[0]) + ' ' + f2(p[1])).join('L') + 'Z';
+// regular N-gon: vertex j sits at angle psi0 + (2j-1)*PI/N, so edge j is centred on psi0 + 2*PI*j/N
+const polyPts = (N, R, psi0) => Array.from({ length: N }, (_, j) => { const a = psi0 + (2 * j - 1) * PI / N; return [R * Math.cos(a), R * Math.sin(a)]; });
+
+// A flower is a regular N-gon split into N trapezoid petals around a small centre N-gon,
+// like the printed Kakooma board. Local coordinates are pixels with the flower centre at (0,0).
+function flowerGeo(N, R, rho, psi0) {
+  const Rin = R * rho, O = polyPts(N, R, psi0), I = polyPts(N, Rin, psi0);
+  const a = R * Math.cos(PI / N), ai = Rin * Math.cos(PI / N), h = a - ai;
+  const so = 2 * R * Math.sin(PI / N), si = 2 * Rin * Math.sin(PI / N);
+  const cen = ai + h * (si + 2 * so) / (3 * (si + so)), tc = (cen - ai) / h, ah = h * .6;
+  const box = { aw: (si + (so - si) * (tc - .5 * ah / h)) * .94, ah, fmax: h * .5 };   // label room inside one petal
+  const bigBox = { aw: a * 1.5, ah: a * 1.1, fmax: a * .46 };                         // label room once it fills the whole pentagon
+  const petals = [];
+  for (let j = 0; j < N; j++) {
+    const k = (j + 1) % N, mid = psi0 + 2 * PI * j / N;
+    petals.push({ d: ptsD([O[j], O[k], I[k], I[j]]), lx: cen * Math.cos(mid), ly: cen * Math.sin(mid) });
+  }
+  return { O, I, petals, box, bigBox };
+}
+
+const CW = .66;
+const wholeW = v => v.w ? String(v.w).length * CW + .28 : 0;
+const fracW = v => Math.max(String(v.n).length, String(v.d).length) * CW * .8 + .34;
+const wOf = v => v.t === 'int' ? v.s.length * CW : v.t === 'op' ? 1 : wholeW(v) + fracW(v);
+const hOf = v => v.t === 'frac' ? 1.75 : 1;
+const rowSize = row => ({ w: row.reduce((s, v) => s + wOf(v), 0), h: Math.max(...row.map(hOf)) });
+
+function drawRow(row, fs, y) {
+  const { w } = rowSize(row); let x = -w * fs / 2, out = '';
+  for (const v of row) {
+    const vw = wOf(v) * fs;
+    if (v.t === 'int' || v.t === 'op') {
+      out += `<text x="${(x + vw / 2).toFixed(2)}" y="${y.toFixed(2)}" dy=".35em" font-size="${fs.toFixed(2)}">${v.s}</text>`;
+    } else {
+      let fx = x;
+      if (v.w) {
+        const tw = String(v.w).length * CW * fs;
+        out += `<text x="${(fx + tw / 2).toFixed(2)}" y="${y.toFixed(2)}" dy=".35em" font-size="${fs.toFixed(2)}">${v.w}</text>`;
+        fx += wholeW(v) * fs;
+      }
+      const f = fs * .8, fw = fracW(v) * fs, cx = fx + fw / 2;
+      out += `<text x="${cx.toFixed(2)}" y="${(y - .56 * f).toFixed(2)}" dy=".35em" font-size="${f.toFixed(2)}">${v.n}</text>` +
+        `<line x1="${(fx + .06 * fs).toFixed(2)}" x2="${(fx + fw - .06 * fs).toFixed(2)}" y1="${y.toFixed(2)}" y2="${y.toFixed(2)}" stroke-width="${(.075 * fs).toFixed(2)}" stroke-linecap="round"/>` +
+        `<text x="${cx.toFixed(2)}" y="${(y + .56 * f).toFixed(2)}" dy=".35em" font-size="${f.toFixed(2)}">${v.d}</text>`;
+    }
+    x += vw;
+  }
+  return out;
+}
+function labelFS(val, box) { const { w, h } = rowSize([val]); return Math.min(box.fmax, box.aw / w, box.ah / h); }
+function labelMarkup(val, box) { return drawRow([val], labelFS(val, box), 0); }
+
+function petalEl(fl, fg, j, val) {
+  const p = fg.petals[j], x = f2(fl.x), y = f2(fl.y);
+  return `<g class="petal" data-f="${fl.i}" data-p="${j}" data-x="${x}" data-y="${y}" style="transform:translate(${x}px,${y}px)"><g class="pi"><path class="pp" d="${p.d}"/>` +
+    `<g class="lab" style="transform:translate(${f2(p.lx)}px,${f2(p.ly)}px)">${labelMarkup(val, fg.box)}</g></g></g>`;
+}
+function iconSVG(N) {
+  const fg = flowerGeo(N, 100, RHO[N], -PI / 2 + PI / N); // one vertex pointing up
+  return `<svg class="ico" viewBox="-106 -106 212 212">${fg.petals.map(p => `<path d="${p.d}"/>`).join('')}<path class="gc" d="${ptsD(fg.I)}"/></svg>`;
+}
+
+/* ============================================================
+   Layout: N flowers sit on the N edges of a big centre polygon
+   ============================================================ */
+// largest separation between two convex polygons along any edge normal (negative = overlapping)
+function sepGap(A, B) {
+  let best = -Infinity;
+  for (const P of [A, B]) for (let i = 0; i < P.length; i++) {
+    const p = P[i], q = P[(i + 1) % P.length]; let nx = q[1] - p[1], ny = p[0] - q[0]; const l = Math.hypot(nx, ny); nx /= l; ny /= l;
+    let a0 = Infinity, a1 = -Infinity, b0 = Infinity, b1 = -Infinity;
+    for (const v of A) { const d = v[0] * nx + v[1] * ny; a0 = Math.min(a0, d); a1 = Math.max(a1, d); }
+    for (const v of B) { const d = v[0] * nx + v[1] * ny; b0 = Math.min(b0, d); b1 = Math.max(b1, d); }
+    best = Math.max(best, a0 - b1, b0 - a1);
+  }
+  return best;
+}
+function layoutPoly(N, W, H) {
+  const padT = 106, padB = 56, padX = 12, aw = W - 2 * padX, ah = H - padT - padB;
+  const touch = N === 5, gap = touch ? 0 : .04, margin = touch ? -.002 : .05; // 5 flowers meet corner to corner, like the printed board
+  const Rb = 1 / (2 * Math.sin(PI / N)), ab = Rb * Math.cos(PI / N); // big polygon has side 1
+  let best = null;
+  for (let k = 1.3; k >= .3; k -= .01) {                              // k = flower size relative to the big polygon
+    const D = ab + gap + k * ab, fl = [];
+    for (let i = 0; i < N; i++) { const phi = -PI / 2 + 2 * PI * i / N; fl.push({ x: D * Math.cos(phi), y: D * Math.sin(phi), psi0: phi + PI }); }
+    const polys = fl.map(f => polyPts(N, k * Rb, f.psi0).map(p => [p[0] + f.x, p[1] + f.y]));
+    let ok = true;
+    for (let i = 0; i < N && ok; i++) for (let j = i + 1; j < N; j++) if (sepGap(polys[i], polys[j]) < margin) { ok = false; break; }
+    if (!ok) continue;
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    polys.forEach(P => P.forEach(p => { x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); }));
+    const sc = Math.min(aw / (x1 - x0), ah / (y1 - y0)), score = k * sc;
+    if (!best || score > best.score) best = { k, sc, score, fl, x0, x1, y0, y1 };
+  }
+  const { sc } = best, ox = padX + aw / 2 - (best.x0 + best.x1) / 2 * sc, oy = padT + ah / 2 - (best.y0 + best.y1) / 2 * sc;
+  return { cx: ox, cy: oy, Rb: Rb * sc, Rf: best.k * Rb * sc, flowers: best.fl.map(f => ({ x: ox + f.x * sc, y: oy + f.y * sc, psi0: f.psi0 })) };
+}
+
+/* ============================================================
+   State + backend
+   ============================================================ */
+const state = {
+  summary: { players: null, bests: {}, plays: {} },
+  anon: store.load('kk.anon', { bests: {}, plays: {} }),
+  name: null, mode: null, game: null, online: null, skin: 0,
+  extra: store.load('kk.extra', []),   // names typed in by players that aren't on the list yet
+};
+
+function summarize(rows) {
+  const bests = {}, plays = {};
+  rows.forEach(r => {
+    if (!bests[r.mode]) bests[r.mode] = {};
+    if (bests[r.mode][r.name] === undefined || r.time < bests[r.mode][r.name]) bests[r.mode][r.name] = r.time;
+    if (!plays[r.name]) plays[r.name] = {};
+    plays[r.name][r.mode] = (plays[r.name][r.mode] || 0) + 1;
+  });
+  return { bests, plays };
+}
+const post = rec => fetch(CONFIG.SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(rec) }).then(r => r.json());
+const Backend = {
+  async summary() {
+    if (!CONFIG.SCRIPT_URL) return Object.assign(summarize(store.load('kk.rows', [])), { players: null });
+    await Backend.flush();
+    const r = await fetch(CONFIG.SCRIPT_URL + '?action=summary&t=' + Date.now());
+    if (!r.ok) throw new Error('http ' + r.status);
+    return r.json();
+  },
+  async submit(rec) {
+    if (!CONFIG.SCRIPT_URL) {
+      const rows = store.load('kk.rows', []); rows.push(rec); store.save('kk.rows', rows);
+      return Backend.summary();
+    }
+    try { const j = await post(rec); if (!j || !j.ok) throw new Error('rejected'); return j; }
+    catch (e) { const q = store.load('kk.pending', []); q.push(rec); store.save('kk.pending', q); throw e; }
+  },
+  async join(name) {
+    if (!CONFIG.SCRIPT_URL) return;
+    const rec = { action: 'join', name };
+    try { const j = await post(rec); if (!j || !j.ok) throw new Error('rejected'); }
+    catch (e) { const q = store.load('kk.pending', []); q.push(rec); store.save('kk.pending', q); }
+  },
+  async flush() {
+    const q = store.load('kk.pending', []); if (!q.length) return;
+    const rest = [];
+    for (const rec of q) { try { const j = await post(rec); if (!j || !j.ok) rest.push(rec); } catch (e) { rest.push(rec); } }
+    store.save('kk.pending', rest);
+  },
+};
+
+const bestOf = (n, m) => n === CONFIG.GUEST ? state.anon.bests[m] : (state.summary.bests[m] || {})[n];
+const playsOf = (n, m) => n === CONFIG.GUEST ? (state.anon.plays[m] || 0) : ((state.summary.plays[n] || {})[m] || 0);
+const isUnlocked = (n, m) => m === CONFIG.BASIC || n === CONFIG.TEACHER || playsOf(n, CONFIG.BASIC) >= CONFIG.UNLOCK_AFTER;
+
+function recordLocal(n, m, t) {
+  if (n === CONFIG.GUEST) {
+    const b = state.anon.bests[m]; if (b === undefined || t < b) state.anon.bests[m] = t;
+    state.anon.plays[m] = (state.anon.plays[m] || 0) + 1; store.save('kk.anon', state.anon);
+  } else {
+    const S = state.summary;
+    if (!S.bests[m]) S.bests[m] = {};
+    if (S.bests[m][n] === undefined || t < S.bests[m][n]) S.bests[m][n] = t;
+    if (!S.plays[n]) S.plays[n] = {};
+    S.plays[n][m] = (S.plays[n][m] || 0) + 1;
+  }
+}
+function standing(n, m) {
+  const mine = bestOf(n, m);
+  const others = Object.entries(state.summary.bests[m] || {}).filter(([k]) => k !== CONFIG.GUEST && k !== n).map(([k, t]) => ({ n: k, t }));
+  const better = others.filter(e => e.t < mine).sort((a, b) => b.t - a.t);
+  const worse = others.filter(e => e.t >= mine).sort((a, b) => a.t - b.t);
+  const above = better[0] || null;
+  return { place: better.length + 1, total: others.length + 1, above, gap: above ? mine - above.t : null, below: worse[0] || null, lead: worse[0] ? worse[0].t - mine : null, guest: n === CONFIG.GUEST };
+}
+
+async function refreshSummary() {
+  try {
+    const s = await Backend.summary();
+    state.summary = { players: s.players || null, bests: s.bests || {}, plays: s.plays || {} };
+    state.online = true;
+  } catch (e) { state.online = false; }
+  setStatus();
+  if ($('#screen-name').classList.contains('active')) renderNames();
+  if ($('#screen-modes').classList.contains('active')) renderModes();
+  if ($('#lb').classList.contains('show')) renderLB();
+}
+function setStatus() {
+  $('#status').textContent = !CONFIG.SCRIPT_URL ? 'Local mode \u2013 scores are saved on this device only'
+    : state.online === false ? 'Offline \u2013 scores will sync when you\u2019re back online' : '';
+}
+
+/* ============================================================
+   Skins: a new colour scheme unlocks for every 5 completed games
+   ============================================================ */
+const SKINS = [
+  { name: 'Hanami', theme: '#1b0f2e', v: {} }, // the default look lives in :root
+  { name: 'Lagoon', theme: '#04141f', v: {
+    bgA: '#04141f', bgB: '#06283a', bgC: '#0a3d4f', glow: 'rgba(30,160,170,.45)', glow2: 'rgba(140,235,235,.14)', moonc: 'rgba(200,250,250,.2)',
+    moon: '#e6fbff', 'moon-dim': '#8fbfc9', rose: '#5fe0d6', time: '#a8f3ee', 'petal-ink': '#06303a', line: 'rgba(160,240,240,.18)', glass: 'rgba(6,36,52,.7)', opt: '#06283a',
+    p0: '#b8ece8', p1: '#dcf8f5', p2: '#f7fffe', h0: '#8fe0da', h1: '#c1f1ed', h2: '#eefffd', b0: '#a9e8e3', b1: '#d3f6f2', b2: '#f4fffe', c0: '#ffc9a8', c1: '#ff7f6b',
+    pstroke: '#5db8b4', pglow: 'rgba(80,230,220,.38)', cglow: 'rgba(255,127,107,.5)', bl0: '#c9fbf6', bl1: '#4fd6cc', btn0: '#8af0e6', btn1: '#3fc9c0', btnink: '#04282c', btnglow: 'rgba(60,210,200,.8)' } },
+  { name: 'Matcha', theme: '#0b1a10', v: {
+    bgA: '#0b1a10', bgB: '#12301c', bgC: '#1c4a2b', glow: 'rgba(110,190,80,.4)', glow2: 'rgba(220,255,170,.12)', moonc: 'rgba(235,255,200,.18)',
+    moon: '#f1ffe8', 'moon-dim': '#a3c79a', rose: '#b6e36a', time: '#d9f5a0', 'petal-ink': '#1f3a12', line: 'rgba(200,240,160,.18)', glass: 'rgba(14,38,22,.7)', opt: '#12301c',
+    p0: '#d6ecb0', p1: '#ebf6d3', p2: '#fbfff2', h0: '#bfe28a', h1: '#dcf0b6', h2: '#f5fde4', b0: '#cbe99a', b1: '#e3f4c4', b2: '#f8ffec', c0: '#ffe9a3', c1: '#e8b64a',
+    pstroke: '#8fb860', pglow: 'rgba(170,230,100,.35)', cglow: 'rgba(232,182,74,.5)', bl0: '#e8f9c4', bl1: '#9fd35a', btn0: '#cdee86', btn1: '#9bd04a', btnink: '#18300c', btnglow: 'rgba(150,210,70,.75)' } },
+  { name: 'Ember', theme: '#1c0808', v: {
+    bgA: '#1c0808', bgB: '#3a1010', bgC: '#5a1c12', glow: 'rgba(255,110,40,.45)', glow2: 'rgba(255,200,120,.14)', moonc: 'rgba(255,225,190,.2)',
+    moon: '#fff0e6', 'moon-dim': '#d4a791', rose: '#ff9a52', time: '#ffd0a6', 'petal-ink': '#4a1a0c', line: 'rgba(255,200,160,.18)', glass: 'rgba(50,14,10,.7)', opt: '#3a1010',
+    p0: '#ffd0a8', p1: '#ffe6d2', p2: '#fffaf5', h0: '#ffb27e', h1: '#ffd2b3', h2: '#fff1e6', b0: '#ffc296', b1: '#ffdcc4', b2: '#fff6ee', c0: '#ffb0a0', c1: '#e0452e',
+    pstroke: '#e08a58', pglow: 'rgba(255,140,70,.4)', cglow: 'rgba(224,69,46,.55)', bl0: '#ffe2c4', bl1: '#ff9a52', btn0: '#ffc08a', btn1: '#ff8a3d', btnink: '#401408', btnglow: 'rgba(255,130,50,.8)' } },
+  { name: 'Paper', theme: '#f6f1ea', v: {
+    bgA: '#f6f1ea', bgB: '#efe7f4', bgC: '#e6e0f2', glow: 'rgba(190,170,230,.45)', glow2: 'rgba(255,200,220,.4)', moonc: 'rgba(255,255,255,.7)', star: 'rgba(120,100,180,.6)',
+    moon: '#2b2140', 'moon-dim': '#7a6d94', hi: '#1d1530', rose: '#d6477f', time: '#c23a70', 'petal-ink': '#2b2140', line: 'rgba(60,40,100,.16)', glass: 'rgba(255,255,255,.78)', panel: 'rgba(60,40,100,.05)', rule: 'rgba(60,40,100,.12)', opt: '#f6f1ea',
+    p0: '#d9d1f7', p1: '#ece8fc', p2: '#fdfcff', h0: '#c2b6f2', h1: '#dcd5f8', h2: '#f6f4ff', b0: '#cfc6f5', b1: '#e5e0fa', b2: '#faf9ff', c0: '#ffc2d4', c1: '#e8588a',
+    pstroke: '#9a8cd0', pglow: 'rgba(120,100,200,.28)', cglow: 'rgba(232,88,138,.4)', bl0: '#e6defc', bl1: '#b3a2ee', btn0: '#f58cb0', btn1: '#d6477f', btnink: '#fff', btnglow: 'rgba(214,71,127,.5)' } },
+  { name: 'Aurora', theme: '#0a0a2a', v: {
+    bgA: '#0a0a2a', bgB: '#16164a', bgC: '#1c2f5e', glow: 'rgba(60,200,170,.4)', glow2: 'rgba(170,150,255,.18)', moonc: 'rgba(210,205,255,.2)',
+    moon: '#eeeaff', 'moon-dim': '#a9a6d6', rose: '#9d8bff', time: '#c9bfff', 'petal-ink': '#231a52', line: 'rgba(190,180,255,.2)', glass: 'rgba(18,18,60,.7)', opt: '#16164a',
+    p0: '#cfc6ff', p1: '#e6e1ff', p2: '#faf9ff', h0: '#b5a8ff', h1: '#d3ccff', h2: '#f1efff', b0: '#c3b9ff', b1: '#dcd6ff', b2: '#f6f4ff', c0: '#b8ffe6', c1: '#34d3a4',
+    pstroke: '#8d7fe0', pglow: 'rgba(150,130,255,.4)', cglow: 'rgba(52,211,164,.5)', bl0: '#d9d3ff', bl1: '#8de3c8', btn0: '#b5a8ff', btn1: '#7a68f0', btnink: '#150f40', btnglow: 'rgba(120,100,240,.8)' } },
+];
+const SKIN_VARS = [...new Set(SKINS.flatMap(k => Object.keys(k.v)))];
+function applySkin(i) {
+  const k = SKINS[i] || SKINS[0], r = document.documentElement.style;
+  SKIN_VARS.forEach(v => r.removeProperty('--' + v));
+  Object.entries(k.v).forEach(([v, c]) => r.setProperty('--' + v, c));
+  $('#themeColor').setAttribute('content', k.theme);
+  state.skin = SKINS.indexOf(k); store.save('kk.lastSkin', state.skin);
+}
+const totalPlays = n => MODES.reduce((a, m) => a + playsOf(n, m.id), 0);
+const skinCount = n => n === CONFIG.TEACHER ? SKINS.length : Math.min(SKINS.length, 1 + Math.floor(totalPlays(n) / CONFIG.SKIN_EVERY));
+const skinChoice = n => { const c = store.load('kk.skin.' + n, 0); return c < skinCount(n) ? c : 0; };
+function renderSkins() {
+  const n = state.name, cnt = skinCount(n), cur = skinChoice(n);
+  $('#skins').innerHTML = cnt < 2 && totalPlays(n) === 0 ? '' :
+    '<span class="lab">Skin</span>' + SKINS.slice(0, cnt).map((k, i) =>
+      `<button class="sw ${i === cur ? 'on' : ''}" data-i="${i}" title="${k.name}" aria-label="${k.name} skin"><i style="background:linear-gradient(135deg,${k.v.bgB || '#22113c'},${k.v.bgC || '#2e1649'})"></i><i style="background:${k.v.p1 || '#ffe1ea'}"></i></button>`).join('') +
+    (cnt < SKINS.length ? `<div id="skinNote">${CONFIG.SKIN_EVERY - totalPlays(n) % CONFIG.SKIN_EVERY} more ${CONFIG.SKIN_EVERY - totalPlays(n) % CONFIG.SKIN_EVERY === 1 ? 'game' : 'games'} to unlock a new skin</div>` : '');
+  $('#skins').onclick = e => {
+    const b = e.target.closest('.sw'); if (!b) return;
+    store.save('kk.skin.' + n, +b.dataset.i); applySkin(+b.dataset.i); renderSkins();
+  };
+}
+
+/* ============================================================
+   Screens
+   ============================================================ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === 'screen-' + id));
+}
+const cleanName = t => { t = t.replace(/[<>]/g, '').replace(/\s+/g, ' ').trim(); return t.charAt(0).toUpperCase() + t.slice(1); };
+const allNames = () => {
+  const base = (state.summary.players && state.summary.players.length ? state.summary.players : CONFIG.PLAYERS).concat(state.extra);
+  const seen = new Set(), out = [];
+  base.forEach(n => { const k = n.toLowerCase(); if (!seen.has(k) && n !== CONFIG.TEACHER && n !== CONFIG.GUEST) { seen.add(k); out.push(n); } });
+  return out.concat([CONFIG.TEACHER, CONFIG.GUEST]);
+};
+let suggItems = [], suggSel = 0;
+function renderNames() {
+  const q = cleanName($('#nameIn').value).toLowerCase(), box = $('#sugg');
+  suggItems = [];
+  if (q) {
+    const names = allNames();
+    const score = n => { const l = n.toLowerCase(); return l.startsWith(q) ? 0 : l.split(' ').some(w => w.startsWith(q)) ? 1 : l.includes(q) ? 2 : 9; };
+    names.map((n, i) => [n, score(n), i]).filter(x => x[1] < 9).sort((a, b) => a[1] - b[1] || a[2] - b[2]).slice(0, 5).forEach(x => suggItems.push({ n: x[0] }));
+    if (q.length >= 2 && !names.some(n => n.toLowerCase() === q)) suggItems.push({ n: cleanName($('#nameIn').value), add: true });
+  }
+  suggSel = Math.min(suggSel, Math.max(0, suggItems.length - 1));
+  box.innerHTML = suggItems.map((it, i) => {
+    const cls = (i === suggSel ? 'sel ' : '') + (it.add ? 'add' : it.n === CONFIG.TEACHER || it.n === CONFIG.GUEST ? 'sp' : '');
+    return `<li class="${cls}" data-i="${i}" role="option">${it.add ? `Add <b>${esc(it.n)}</b> as a new player` : hilite(it.n, q)}</li>`;
+  }).join('');
+}
+function hilite(n, q) {
+  const k = n.toLowerCase().indexOf(q);
+  return k < 0 ? esc(n) : esc(n.slice(0, k)) + '<mark>' + esc(n.slice(k, k + q.length)) + '</mark>' + esc(n.slice(k + q.length));
+}
+function chooseName(it) {
+  if (!it) return;
+  if (it.add) {
+    if (!state.extra.some(x => x.toLowerCase() === it.n.toLowerCase())) { state.extra.push(it.n); store.save('kk.extra', state.extra); }
+    Backend.join(it.n);
+  }
+  state.name = it.n; $('#nameIn').blur();
+  applySkin(skinChoice(it.n)); renderModes(); showScreen('modes'); refreshSummary();
+}
+$('#nameIn').addEventListener('input', () => { suggSel = 0; renderNames(); });
+$('#nameIn').addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); suggSel = Math.min(suggItems.length - 1, suggSel + 1); renderNames(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); suggSel = Math.max(0, suggSel - 1); renderNames(); }
+  else if (e.key === 'Enter') { e.preventDefault(); chooseName(suggItems[suggSel]); }
+  else if (e.key === 'Escape') { $('#nameIn').value = ''; renderNames(); }
+});
+$('#sugg').addEventListener('pointerdown', e => { const li = e.target.closest('li'); if (li) { e.preventDefault(); chooseName(suggItems[+li.dataset.i]); } });
+function openNames() {
+  state.name = null; $('#nameIn').value = ''; suggSel = 0; renderNames(); showScreen('name');
+  if (matchMedia('(pointer:fine)').matches) $('#nameIn').focus();
+}
+function renderModes() {
+  const n = state.name; if (!n) return;
+  const first = n === CONFIG.TEACHER ? n : n === CONFIG.GUEST ? 'guest' : n.split(' ')[0];
+  $('#hello').textContent = 'Hi, ' + first;
+  renderSkins();
+  const unlocked = isUnlocked(n, 'add-hard'), plays = playsOf(n, CONFIG.BASIC);
+  $('#modesSub').textContent = unlocked ? 'Pick a garden to play'
+    : `Play ${CONFIG.UNLOCK_AFTER - plays} more Easy addition ${CONFIG.UNLOCK_AFTER - plays === 1 ? 'game' : 'games'} to unlock more gardens`;
+  $('#dots').innerHTML = unlocked ? '' : Array.from({ length: CONFIG.UNLOCK_AFTER }, (_, i) => `<b class="${i < plays ? 'on' : ''}"></b>`).join('');
+  // locked modes stay hidden until they are unlocked
+  $('#modes').innerHTML = OPS.map(o => ({ o, ms: MODES.filter(m => m.op === o.id && isUnlocked(n, m.id)) })).filter(x => x.ms.length).map(({ o, ms }) =>
+    `<div class="row"><div class="rowlabel"><i>${o.sym}</i>${o.label}</div><div class="cards">` + ms.map(m => {
+      const b = bestOf(n, m.id);
+      return `<button class="mode" data-id="${m.id}"><span class="opb">${o.sym}</span>${iconSVG(m.n)}<b>${m.levelLabel}</b><small>${m.n} by ${m.n}</small><em>${b != null ? fmt(b) + 's' : 'Play'}</em></button>`;
+    }).join('') + '</div></div>').join('');
+  $('#modes').onclick = e => {
+    const b = e.target.closest('.mode'); if (!b || b.classList.contains('locked')) return;
+    openIntro(b.dataset.id);
+  };
+}
+
+/* ---------- leaderboard ---------- */
+function renderLB() {
+  const id = $('#lbMode').value;
+  const rows = Object.entries(state.summary.bests[id] || {}).filter(([n]) => n !== CONFIG.GUEST).sort((a, b) => a[1] - b[1]);
+  const meIdx = rows.findIndex(r => r[0] === state.name), LIM = Math.max(4, Math.min(8, Math.floor((innerHeight - 280) / 42)));
+  const shown = rows.slice(0, LIM).map((r, i) => [r, i]); if (meIdx >= LIM) shown[LIM - 1] = [rows[meIdx], meIdx];
+  $('#lbList').innerHTML = rows.length
+    ? shown.map(([[n, t], i]) => `<li class="${n === state.name ? 'me' : ''}"><span>${i + 1}</span><b>${esc(n)}</b><em>${fmt(t)}s</em></li>`).join('')
+    : '<p class="empty">No scores yet \u2013 be the first!</p>';
+}
+function openLB(modeId) {
+  $('#lbMode').innerHTML = MODES.filter(m => isUnlocked(state.name, m.id)).map(m => `<option value="${m.id}">${m.title}</option>`).join('');
+  $('#lbMode').value = modeId || CONFIG.BASIC;
+  renderLB(); $('#lb').classList.add('show'); refreshSummary();
+}
+
+/* ============================================================
+   Game
+   ============================================================ */
+const backL = $('#backL'), svg = $('#stage'), board = $('#board'), bigC = $('#bigC'), bigP = $('#bigP'), petalsL = $('#petalsL'), centersL = $('#centersL'), fxL = $('#fxL');
+const setHint = () => {};
+const elapsed = g => (performance.now() - g.t0) / 1000 + g.pen * CONFIG.PENALTY;
+const setBest = () => { const b = bestOf(state.name, state.mode.id); $('#best').textContent = 'Best ' + (b != null ? fmt(b) : '\u2013'); };
+
+function clearStage() {
+  const g = state.game; if (g) { g.dead = true; cancelAnimationFrame(g.raf); }
+  state.game = null;
+  bigC.getAnimations().forEach(a => a.cancel()); bigC.style.visibility = 'visible';
+  backL.innerHTML = ''; petalsL.innerHTML = ''; centersL.innerHTML = ''; fxL.innerHTML = ''; bigP.innerHTML = ''; bigC.innerHTML = '';
+  $('#result').classList.remove('show'); $('#count').style.opacity = 0;
+}
+
+function openIntro(modeId) {
+  state.mode = MODES.find(m => m.id === modeId);
+  const m = state.mode; clearStage(); showScreen('game');
+  const op = OPS.find(o => o.id === m.op);
+  $('#modeTag').innerHTML = `<b>${op.sym}</b><span>${op.label}</span>`;
+  $('#introTitle').textContent = m.title;
+  $('#introMeta').textContent = `${m.n} flowers, ${m.n} petals each`;
+  const rel = WORD[m.op];
+  const ex = { add: 'e.g. in 3, 4, 9, 7 the 7 is 3 + 4.', mul: 'e.g. in 3, 4, 9, 12 the 12 is 3 \u00d7 4.' }[m.op];
+  $('#introSteps').innerHTML = [
+    `Find the petal that is the <b>${rel}</b> of two other petals in the same flower, and tap it. <span style="color:var(--moon-dim)">${ex}</span>`,
+    `Right petals bloom into the big flower. A wrong petal adds ${CONFIG.PENALTY} seconds.`,
+    `Then find the ${rel} petal on the big flower to finish.`,
+  ].map((t, i) => `<li><i>${i + 1}</i><span>${t}</span></li>`).join('');
+  $('#intro').classList.add('show'); setHint(''); $('#timer').firstChild.nodeValue = '0.0'; setBest();
+}
+
+async function startGame() {
+  const m = state.mode; $('#intro').classList.remove('show'); $('#result').classList.remove('show');
+  clearStage();
+  const g = state.game = Object.assign(genGame(m), { pen: 0, got: 0, phase: 'count', dead: false, t0: 0 });
+  buildBoard(g); board.style.opacity = 0;
+  const fade = board.animate([{ opacity: 0, transform: 'scale(.94)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 2250, easing: 'ease-out', fill: 'forwards' });
+  $('#timer').firstChild.nodeValue = '0.0'; setBest(); setHint('');
+  const cnt = $('#count');
+  for (const n of ['3', '2', '1']) {
+    if (g.dead) return;
+    cnt.textContent = n;
+    cnt.animate([{ opacity: 0, transform: 'scale(.7)' }, { opacity: .85, transform: 'scale(1)', offset: .3 }, { opacity: 0, transform: 'scale(1.15)' }], { duration: 760, fill: 'forwards' });
+    await wait(760);
+  }
+  if (g.dead) return;
+  board.style.opacity = 1; fade.cancel();
+  petalsL.querySelectorAll('.petal').forEach(p => p.classList.add('live'));
+  g.t0 = performance.now(); g.phase = 'play';
+  setHint(`Tap the petal that is the ${g.word} of two others. A wrong petal adds ${CONFIG.PENALTY} seconds.`);
+  tick();
+}
+
+function tick() {
+  const g = state.game; if (!g || g.dead || g.phase === 'done') return;
+  const t = fmt(elapsed(g)); const node = $('#timer').firstChild;
+  if (node.nodeValue !== t) node.nodeValue = t;
+  g.raf = requestAnimationFrame(tick);
+}
+
+function buildBoard(g) {
+  const W = document.documentElement.clientWidth, H = document.documentElement.clientHeight, N = g.mode.n;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const L = layoutPoly(N, W, H);
+  Object.assign(g, { lay: { cx: L.cx, cy: L.cy, vx: L.cx, vy: L.cy }, W, H });
+  let pH = '', cH = '';
+  g.flowers.forEach((fl, i) => {
+    const f = L.flowers[i]; fl.x = f.x; fl.y = f.y;
+    const fg = fl.fg = flowerGeo(N, L.Rf, RHO[N], f.psi0);
+    fl.vals.forEach((v, j) => { pH += petalEl(fl, fg, j, v); });
+    cH += `<g class="ctr" data-f="${i}" data-x="${f2(f.x)}" data-y="${f2(f.y)}" style="transform:translate(${f2(f.x)}px,${f2(f.y)}px)"><path class="ol" d="${ptsD(fg.O)}"/><path class="gc" d="${ptsD(fg.I)}"/></g>`;
+  });
+  petalsL.innerHTML = pH; centersL.innerHTML = cH; bigP.innerHTML = ''; fxL.innerHTML = '';
+  g.flowers.forEach(fl => { fl.els = [...petalsL.querySelectorAll(`.petal[data-f="${fl.i}"]`)]; });
+  const bp = polyPts(N, L.Rb, -PI / 2);
+  bigC.dataset.x = f2(L.cx); bigC.dataset.y = f2(L.cy); bigC.style.transform = `translate(${f2(L.cx)}px,${f2(L.cy)}px)`;
+  bigC.innerHTML = `<path class="ol" d="${ptsD(bp)}"/><path class="gc" d="${ptsD(bp)}"/>`;
+}
+
+/* ---------- animations ---------- */
+// petals fall away from the viewer: they shrink toward a vanishing point and fade, never downward
+function recede(el, delay, keep) {
+  const g = state.game, x = +el.dataset.x, y = +el.dataset.y, vx = g.lay.vx - x, vy = g.lay.vy - y;
+  if (!keep) backL.appendChild(el);
+  const r = (Math.random() - .5) * 60, dur = 1300 + Math.random() * 600;
+  const T = (p, sc, rot) => `translate(${x + vx * p}px,${y + vy * p}px) scale(${sc}) rotate(${rot}deg)`;
+  const a = el.animate([{ transform: T(0, 1, 0) }, { transform: T(.3, .5, r * .5), offset: .45 }, { transform: T(.55, .08, r) }],
+    { duration: dur, delay, easing: 'cubic-bezier(.2,.55,.35,1)', fill: 'both' });
+  a.onfinish = () => { if (keep) el.style.visibility = 'hidden'; else el.remove(); };
+  el.animate([{ opacity: 1 }, { opacity: 1, offset: .35 }, { opacity: 0 }], { duration: dur, delay, easing: 'ease-in', fill: 'both' });
+}
+
+function tween(g, dur, delay, fn, done) {
+  const t0 = performance.now() + delay;
+  const step = now => {
+    if (g.dead) return;
+    const p = Math.max(0, Math.min(1, (now - t0) / dur)), e = p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+    fn(e);
+    if (p < 1) requestAnimationFrame(step); else if (done) done();
+  };
+  requestAnimationFrame(step);
+}
+
+// the chosen trapezoid grows outward into the flower's whole pentagon
+function morphPts(N, O, I, j) {
+  const S = [O[j], O[(j + 1) % N]], E = [], A = I[(j + 1) % N], B = I[j];
+  for (let m = 0; m < N; m++) E.push(O[(j + m) % N]);
+  for (let q = 0; q < N - 2; q++) { const t = q / (N - 3); S.push([A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t]); }
+  return [S, E];
+}
+
+function solveFlower(g, fl, el) {
+  fl.done = true; const fg = fl.fg, j = +el.dataset.p, N = g.mode.n, val = fl.vals[fl.correct], pt = fg.petals[j];
+  fl.els.forEach(e => e.classList.remove('live'));
+  // the correct number leaves its petal; every petal, the right one included, falls away
+  const oldLab = el.querySelector('.lab'); if (oldLab) oldLab.remove();
+  fl.els.forEach(e => recede(e, Math.random() * 220));
+  const ctr = centersL.querySelector(`[data-f="${fl.i}"]`); if (ctr) ctr.remove();
+  // the flower's centre carries the number and grows into the big-flower petal
+  const x = f2(fl.x), y = f2(fl.y), Rin = Math.hypot(fg.I[0][0], fg.I[0][1]);
+  const ks = Math.min(1, labelFS(val, { aw: Rin * 1.2, ah: Rin * .95, fmax: 99 }) / labelFS(val, fg.box));
+  const big = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  big.setAttribute('class', 'petal bigp'); big.dataset.f = 'big'; big.dataset.p = fl.i; big.dataset.x = x; big.dataset.y = y;
+  big.style.transform = `translate(${x}px,${y}px)`;
+  big.innerHTML = `<g class="pi"><path class="pp" d="${ptsD(fg.I)}"/><path class="gc" d="${ptsD(fg.I)}"/><g class="lab" style="transform:translate(0px,0px) scale(${ks})">${labelMarkup(val, fg.box)}</g></g>`;
+  bigP.appendChild(big);
+  const [pp, gc] = big.querySelectorAll('path'), lab = big.querySelector('.lab');
+  const k = labelFS(val, fg.bigBox) / labelFS(val, fg.box);
+  tween(g, 950, 60, p => {
+    const d = ptsD(fg.I.map((a, m) => [a[0] + (fg.O[m][0] - a[0]) * p, a[1] + (fg.O[m][1] - a[1]) * p]));
+    pp.setAttribute('d', d); gc.setAttribute('d', d); gc.style.opacity = 1 - p;
+    lab.style.transform = `scale(${ks + (k - ks) * p})`;
+  }, () => {
+    gc.remove(); lab.innerHTML = labelMarkup(val, fg.bigBox); lab.style.transform = 'translate(0px,0px)';
+    big.querySelector('.pi').animate([{ transform: 'scale(1.06)' }, { transform: 'scale(1)' }], { duration: 320, easing: 'ease-out' });
+    g.got++; if (g.got === N) bloom(g);
+  });
+}
+
+function bloom(g) {
+  g.phase = 'bloom'; setHint('');
+  setTimeout(() => {
+    if (g.dead) return;
+    const ps = [...bigP.querySelectorAll('.petal')];
+    ps.forEach((p, i) => p.querySelector('.pi').animate([{ transform: 'scale(1)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1)' }], { duration: 520, delay: i * 70, easing: 'ease-in-out' }));
+    ps.forEach(p => p.classList.add('live'));
+    g.phase = 'final'; setHint(`Last step: tap the ${g.word} petal on the big flower.`);
+  }, 350);
+}
+
+function wrongTap(g, el) {
+  g.pen++; el.classList.remove('live'); el.classList.add('wrong');
+  el.querySelector('.pi').animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(-3px)' }, { transform: 'translateX(0)' }], { duration: 340 });
+  const tm = $('#timer'); tm.classList.add('hit'); setTimeout(() => tm.classList.remove('hit'), 650);
+  $('#pen').textContent = '+' + CONFIG.PENALTY + 's';
+  $('#pen').animate([{ opacity: 0, transform: 'translateY(-4px)' }, { opacity: 1, transform: 'translateY(0)', offset: .15 }, { opacity: 1, offset: .6 }, { opacity: 0, transform: 'translateY(8px)' }], { duration: 1100 });
+}
+
+function finale(g, el) {
+  g.phase = 'done'; cancelAnimationFrame(g.raf);
+  const time = Math.round(elapsed(g) * 100) / 100;
+  $('#timer').firstChild.nodeValue = fmt(time);
+  const petals = [...bigP.querySelectorAll('.petal')];
+  petals.forEach(p => p.classList.remove('live'));
+  petals.forEach(p => { if (p !== el) recede(p, Math.random() * 260); });
+  recede(bigC, 60, true);
+  const x = +el.dataset.x, y = +el.dataset.y, { cx, cy } = g.lay;
+  fxL.appendChild(el);
+  el.animate([{ transform: `translate(${x}px,${y}px) scale(1)` }, { transform: `translate(${cx}px,${cy}px) scale(1.45)` }], { duration: 1000, delay: 150, easing: 'cubic-bezier(.25,.8,.25,1)', fill: 'both' });
+  el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, delay: 1000, fill: 'both' });
+  setHint('');
+  finishGame(g, time);
+  setTimeout(() => { if (!g.dead) $('#result').classList.add('show'); }, 950);
+}
+
+/* ---------- finishing ---------- */
+function resultHTML(r) {
+  const st = standing(state.name, state.mode.id), best = bestOf(state.name, state.mode.id);
+  let gap;
+  if (st.above) gap = `<div class="rrow"><span>Behind the next player</span><b>${st.gap.toFixed(1)}s <small>${esc(st.above.n)}</small></b></div>`;
+  else if (st.lead != null) gap = `<div class="rrow"><span>Top of the class</span><b>${st.lead.toFixed(1)}s <small>ahead</small></b></div>`;
+  else gap = `<div class="rrow"><span>Top of the class</span><b>First on the board</b></div>`;
+  return `<div class="rlabel">${esc(state.mode.title)}</div>` +
+    `<div class="rtime">${fmt(r.time)}${r.time < 60 ? '<small>s</small>' : ''}</div>` +
+    `<div class="rpen">${r.pen ? `${r.pen} wrong ${r.pen === 1 ? 'tap' : 'taps'} \u00b7 +${r.pen * CONFIG.PENALTY}s included` : 'Clean run \u2013 no penalties'}</div>` +
+    [r.unlocked && 'New gardens unlocked', r.newSkin && `New skin: ${esc(r.newSkin)}`, !r.unlocked && !r.newSkin && r.isPB && 'New personal best'].filter(Boolean).map(t => `<div class="tag">${t}</div>`).join(' ') +
+    `<div class="rrows"><div class="rrow"><span>Personal best</span><b>${fmt(best)}s</b></div>` +
+    `<div class="rrow"><span>${st.guest ? 'Would place' : 'Class place'}</span><b>${ord(st.place)} <small>of ${st.total}</small></b></div>${gap}</div>` +
+    (st.guest ? '<div class="rnote">Guest scores aren\u2019t saved to the class board.</div>' : '') +
+    `<div class="btns"><button class="btn" id="again">Play again</button><button class="btn ghost" id="toMenu">Menu</button></div>`;
+}
+function showResult(r) {
+  $('#result').innerHTML = resultHTML(r);
+  $('#again').onclick = () => startGame();
+  $('#toMenu').onclick = () => goMenu();
+}
+function finishGame(g, time) {
+  const n = state.name, m = state.mode.id, prev = bestOf(n, m), had = MODES.filter(x => isUnlocked(n, x.id)).length;
+  const isPB = prev === undefined || time < prev, skBefore = skinCount(n);
+  recordLocal(n, m, time);
+  const skAfter = skinCount(n), newSkin = skAfter > skBefore ? SKINS[skAfter - 1].name : null;
+  if (newSkin) { store.save('kk.skin.' + n, skAfter - 1); applySkin(skAfter - 1); }
+  const unlocked = MODES.filter(x => isUnlocked(n, x.id)).length > had;
+  const r = { time, pen: g.pen, isPB, unlocked, newSkin };
+  showResult(r); setBest();
+  if (n === CONFIG.GUEST) return;
+  Backend.submit({ action: 'submit', name: n, mode: m, time, penalties: g.pen, ts: Date.now() }).then(s => {
+    state.summary = { players: s.players || state.summary.players, bests: s.bests || {}, plays: s.plays || {} };
+    state.online = true; setStatus();
+    if (state.game === g && $('#result').classList.contains('show')) showResult(r);
+    setBest();
+  }).catch(() => { state.online = false; setStatus(); });
+}
+
+function goMenu() {
+  clearStage(); $('#intro').classList.remove('show');
+  renderModes(); showScreen('modes'); refreshSummary();
+}
+
+/* ---------- input ---------- */
+svg.addEventListener('pointerdown', e => {
+  const el = e.target.closest('.petal.live'); const g = state.game;
+  if (!el || !g || g.dead) return;
+  e.preventDefault();
+  const f = el.dataset.f, p = +el.dataset.p;
+  if (f === 'big') {
+    if (g.phase !== 'final') return;
+    if (p === g.bigCorrect) finale(g, el); else wrongTap(g, el);
+  } else {
+    if (g.phase !== 'play') return;
+    const fl = g.flowers[+f]; if (fl.done) return;
+    if (p === fl.correct) solveFlower(g, fl, el); else wrongTap(g, el);
+  }
+});
+
+let menuArm = null;
+$('#menuBtn').onclick = () => {
+  const g = state.game;
+  if (!g || g.phase === 'done' || g.phase === 'count') { goMenu(); return; }
+  if (menuArm) { clearTimeout(menuArm); menuArm = null; $('#menuBtn').textContent = 'Menu'; goMenu(); return; }
+  $('#menuBtn').textContent = 'Quit game?';
+  menuArm = setTimeout(() => { menuArm = null; $('#menuBtn').textContent = 'Menu'; }, 2200);
+};
+$('#go').onclick = startGame;
+$('#introBack').onclick = goMenu;
+$('#changeName').onclick = openNames;
+$('#openLB').onclick = () => openLB(CONFIG.BASIC);
+$('#lbClose').onclick = () => $('#lb').classList.remove('show');
+$('#lbMode').onchange = renderLB;
+
+/* ---------- init ---------- */
+$('#logo').innerHTML = iconSVG(5).replace('class="ico"', 'class="ico logo" style="width:88px;height:88px"');
+(() => {
+  let h = '<div class="moon"></div>';
+  for (let i = 0; i < 70; i++) h += `<span class="star" style="left:${rint(0, 99)}%;top:${rint(0, 99)}%;--o:${(.15 + Math.random() * .5).toFixed(2)}"></span>`;
+  for (let i = 0; i < 18; i++) { const sz = rint(8, 22); h += `<i style="left:${rint(0, 98)}%;--s:${sz}px;--b:${sz > 16 ? 1.5 : 0}px;--t:${rint(18, 34)}s;--d:-${rint(0, 34)}s;--x:${rint(-90, 120)}px"></i>`; }
+  $('#bg').innerHTML = h;
+})();
+applySkin(store.load('kk.lastSkin', 0));
+renderNames(); setStatus(); refreshSummary();
+})();
+</script>
+</body>
+</html>
